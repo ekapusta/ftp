@@ -826,3 +826,13 @@ func (r *Response) SetDeadline(t time.Time) error {
 func (t EntryType) String() string {
 	return [...]string{"file", "folder", "link"}[t]
 }
+
+// SetLastModified modify a file or folder's last modified date on the remote FTP server.
+func (c *ServerConn) SetLastModified(path string, lastModified time.Time) error {
+	loc, _ := time.LoadLocation("UTC")
+	_, _, err := c.cmd(StatusFile, "MFMT %s %s", lastModified.In(loc).Format("20060102150405"), path)
+	if err != nil {
+		return err
+	}
+	return nil
+}
